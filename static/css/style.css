@@ -1,0 +1,56 @@
+body {
+    background-color: #156058;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor centrado*/
+.container {
+    text-align: center;
+    background-color: #ffffffd9;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+}
+
+/* Título Principal*/
+h1 {
+    color: #3b8560;
+    margin-bottom: 10px;
+}
+
+/* Cuadro de texto*/
+textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    background-color: #f0f7fa;
+}
+
+/* Botón*/
+button {
+    margin-top: 10px;
+    padding: 10px 25px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background-color: #c4e3cb;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #a2d6b8;
+}
