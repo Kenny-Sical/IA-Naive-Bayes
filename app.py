@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from naive import predict_from_text
 
 app = Flask(__name__)
 
@@ -10,7 +11,12 @@ def index():
 def procesar():
     data = request.get_json()
     texto = data.get('texto', '')
-    resultado = f"Texto recibido: {texto[:50]}"
+    
+    if texto.strip() == '':
+        return jsonify({'resultado': 'Por favor, ingrese texto válido.'})
+    
+    prediccion = predict_from_text(texto)
+    resultado = f'Sentimiento predicho: {prediccion.capitalize()}'
     return jsonify({'resultado': resultado})
 
 if __name__ == '__main__':
