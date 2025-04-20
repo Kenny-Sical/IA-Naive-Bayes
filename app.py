@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from naive import predict_from_text
+import time  # Importamos el módulo time para medir tiempos
 
 app = Flask(__name__)
 
@@ -15,8 +16,12 @@ def procesar():
     if texto.strip() == '':
         return jsonify({'resultado': 'Por favor, ingrese texto válido.'})
     
+    inicio = time.time()
     prediccion = predict_from_text(texto)
-    resultado = f'Sentimiento predicho: {prediccion.capitalize()}'
+    fin = time.time()
+    tiempo_ejecucion = int((fin - inicio) * 1000)
+    
+    resultado = f'Sentimiento predicho: {prediccion.capitalize()}. Tiempo de ejecución: {tiempo_ejecucion} ms'
     return jsonify({'resultado': resultado})
 
 if __name__ == '__main__':
