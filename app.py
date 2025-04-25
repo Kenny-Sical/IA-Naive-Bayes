@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-from naive import predict_from_text
-import time  # Importamos el módulo time para medir tiempos
+from naive import predict_from_text, evaluar_modelo
+import time
 
 app = Flask(__name__)
 
@@ -23,6 +23,11 @@ def procesar():
     
     resultado = f'Sentimiento predicho: {prediccion.capitalize()}. Tiempo de ejecución: {tiempo_ejecucion} ms'
     return jsonify({'resultado': resultado})
+
+@app.route('/metricas', methods=['GET'])
+def metricas():
+    reporte = evaluar_modelo()
+    return jsonify({'reporte': reporte})
 
 if __name__ == '__main__':
     app.run(debug=True)

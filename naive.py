@@ -1,21 +1,23 @@
 import pandas as pd
 import re
 import numpy as np
-from collections import defaultdict
+import pickle
+import os
+from collections import defaultdict, Counter
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
-# ---------------------------
-# 1. PREPROCESAMIENTO
-# ---------------------------
+MODEL_FILE = "modelo_naive.pkl"
 
 def preprocess(text):
-    """Convierte el texto a minúsculas, elimina símbolos y lo tokeniza"""
+    "Limpieza de datos y tokenización"
     text = text.lower()
     text = re.sub(r'[^a-z0-9\s]', '', text)
     return text.split()
 
-# ---------------------------
-# 2. CLASIFICADOR NAÏVE BAYES
-# ---------------------------
 
 class NaiveBayesClassifier:
     def __init__(self):
@@ -63,32 +65,53 @@ class NaiveBayesClassifier:
             scores[label] = score
         return max(scores, key=scores.get)
 
-# ---------------------------
-# 3. CARGA Y ENTRENAMIENTO
-# ---------------------------
 
-# Carga tu archivo CSV
-df = pd.read_csv("twitter_training.csv", header=None)
+## Entrena y guarda solo si no existe el modelo
+if not os.path.exists(MODEL_FILE):
+    df = pd.read_csv("twitter_training.csv", header=None)
+    # Columnas relevantes: sentimiento y texto
+    df = df[[2, 3]]
+    df.columns = ["label", "text"]
+    df = df.dropna(subset=["text"])
+    df["text"] = df["text"].astype(str)
+    df["label"] = df["label"].str.lower()
+    # Opcional: Filtrar solo Positive, Negative, Neutral
+    allowed = ["positive", "negative", "neutral"]
+    df = df[df["label"].isin(allowed)]
 
-# Columnas relevantes: sentimiento y texto
-df = df[[2, 3]]
-df.columns = ["label", "text"]
-df = df.dropna(subset=["text"])
-df["text"] = df["text"].astype(str)
-df["label"] = df["label"].str.lower()
+    #Entrenar
+    model = NaiveBayesClassifier()
+    model.train(df.values)
+    #Guardar
+    with open(MODEL_FILE, "wb") as f:
+        pickle.dump(model, f)
 
-# Opcional: Filtrar solo Positive, Negative, Neutral
-allowed = ["positive", "negative", "neutral"]
-df = df[df["label"].isin(allowed)]
 
-# Entrenar
-model = NaiveBayesClassifier()
-model.train(df.values)
+# Cargar una vez al importar el archivo
+with open(MODEL_FILE, "rb") as f:
+    modelo_cargado = pickle.load(f)
 
-# ---------------------------
-# 4. PRUEBA DEL MODELO
-# ---------------------------
-
-# --- Predecir desde otra parte del programa ---
 def predict_from_text(text):
-    return model.predict(text)
+    return modelo_cargado.predict(text)
+
+
+def evaluar_modelo():
+    """Evalúa el modelo en todo el conjunto de entrenamiento."""
+    df = pd.read_csv("twitter_training.csv", header=None)
+    df = df[[2, 3]]
+    df.columns = ["label", "text"]
+    df = df.dropna(subset=["text"])
+    df["text"] = df["text"].astype(str)
+    df["label"] = df["label"].str.lower()
+
+    allowed = ["positive", "negative", "neutral"]
+    df = df[df["label"].isin(allowed)]
+
+    with open(MODEL_FILE, "rb") as f:
+        model = pickle.load(f)
+
+    y_true = df["label"].tolist()
+    y_pred = [model.predict(text) for text in df["text"]]
+
+    reporte = classification_report(y_true, y_pred, digits=3)
+    return reporte

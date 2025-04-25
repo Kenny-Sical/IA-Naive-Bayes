@@ -10,11 +10,22 @@
         <h1>Procesar Texto</h1>
         <form id="textForm">
             <textarea id="inputText" rows="10" cols="50" placeholder="Escriba aquí su texto..."></textarea><br> 
-            <button type="submit">Enviar</button>
+            <div class="button-group">
+                <button type="submit">Enviar</button>
+                <button type="button" id="verMetricas">Ver métricas del modelo</button>
+            </div>
         </form>
         <h3>Resultado:</h3>
         <p id="resultado"></p>
     </div>
+
+    <div id="modalMetricas" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Reporte de Métricas</h3>
+          <pre id="metricas" style="white-space: pre-wrap;"></pre>
+        </div>
+      </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
