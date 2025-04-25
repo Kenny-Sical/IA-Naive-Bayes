@@ -3,12 +3,8 @@ import re
 import numpy as np
 import pickle
 import os
-from collections import defaultdict, Counter
+from collections import defaultdict
 from sklearn.metrics import classification_report
-from sklearn.model_selection import train_test_split
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 
 MODEL_FILE = "modelo_naive.pkl"
 
